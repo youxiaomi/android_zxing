@@ -71,15 +71,14 @@ public class ImportProductActivity extends AppCompatActivity {
               SharedPreferences sp = getSharedPreferences("session", 0);
               String session_s = sp.getString("session","");
               conn.setRequestProperty("Cookie", session_s.substring(0, session_s.indexOf(";")));
-              conn.setRequestMethod("POST");
-
-              conn.setDoOutput(true);
+              conn.setRequestMethod("GET");
+//              conn.setDoOutput(true);
               conn.setReadTimeout(5000);
               conn.setReadTimeout(5000);
 
-              OutputStream out = new BufferedOutputStream(conn.getOutputStream());
-              String test = "阿斯蒂芬";
-//              out.out(test.getBytes());
+//              OutputStream out = conn.getOutputStream();
+//              String test = "name=123";
+//              out.write(test.getBytes());
 
               if (conn.getResponseCode() == 200) {
                 Map<String, List<String>> ck = conn.getHeaderFields();

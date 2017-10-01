@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
       public void run() {
         // TODO Auto-generated method stub
         try {
-          final String path = "http://192.168.5.37:4000";
+          final String path = getString(R.string.request_url);
           URL url = new URL(path);
           HttpURLConnection conn = (HttpURLConnection) url
             .openConnection();

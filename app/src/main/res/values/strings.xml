@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">huawei</string>
-    <string name="request_url">http://192.168.31.172:4000/user</string>
+    <string name="request_url">http://192.168.100.11:4000/user</string>
 </resources>
