@@ -1,11 +1,18 @@
 package com.example.squid.huawei;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.squid.huawei.httpCookies.httpCookies;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,91 +33,139 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import static android.R.attr.data;
+
 public class ImportProductActivity extends AppCompatActivity {
+
+  private EditText barcode ;
+  private EditText productName ;
+  private EditText salePrice ;
+  private EditText costPrice;
+  private EditText weight ;
+  private EditText taste ;
+  private EditText addStockNum;
+  private EditText factory ;
+  private EditText remainStock ;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     setContentView(R.layout.activity_import_product);
 
     Button save = (Button) findViewById(R.id.save);
-    final EditText productName = (EditText) findViewById(R.id.productName);
-    final EditText salePrice = (EditText) findViewById(R.id.salePrice);
-    final EditText costPrice = (EditText) findViewById(R.id.costPrice);
-    final EditText weight = (EditText) findViewById(R.id.weight);
-    final EditText taste = (EditText) findViewById(R.id.taste);
-    final EditText addStockNum = (EditText) findViewById(R.id.addStockNum);
-    final EditText factory = (EditText) findViewById(R.id.factory);
+    barcode = (EditText) findViewById(R.id.barcode);
+    productName = (EditText) findViewById(R.id.productName);
+     salePrice = (EditText) findViewById(R.id.salePrice);
+     costPrice = (EditText) findViewById(R.id.costPrice);
+     weight = (EditText) findViewById(R.id.weight);
+     taste = (EditText) findViewById(R.id.taste);
+     addStockNum = (EditText) findViewById(R.id.addStockNum);
+     factory = (EditText) findViewById(R.id.factory);
+    remainStock = (EditText) findViewById(R.id.remainStock);
+    final httpCookies http = new httpCookies(getString(R.string.request_url)+"/new_production", getSharedPreferences("session", 0));
+
+    final Button scanBarcode = (Button) findViewById(R.id.scanBarcode);
+
+
+    scanBarcode.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        new IntentIntegrator(ImportProductActivity.this).initiateScan(); // `this` is the current Activity
+      }
+    });
+
 
     save.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        if(barcode.getText().toString().equals("") || productName.getText().toString().equals("")){
+          return;
+        }
         final JSONObject productInfo = new JSONObject();
         try{
+          productInfo.put("barcode",barcode.getText());
           productInfo.put("productName",productName.getText());
-          productInfo.put("salePrice",salePrice.getText());
-          productInfo.put("costPrice",costPrice.getText());
+          productInfo.put("salePrice", Double.parseDouble(salePrice.getText().toString()));
+          productInfo.put("costPrice", Double.parseDouble(costPrice.getText().toString()));
           productInfo.put("weight",weight.getText());
           productInfo.put("taste",taste.getText());
-          productInfo.put("addStockNum",addStockNum.getText());
+          productInfo.put("addStockNum", Integer.parseInt(addStockNum.getText().toString()));
           productInfo.put("factory",factory.getText());
         }catch (JSONException e){
           e.printStackTrace();
         }
-
-
-        Thread t = new Thread() {
-          @Override
-          public void run() {
-            try {
-              String path = getString(R.string.request_url);
-              URL url = new URL(path);
-              HttpURLConnection conn = (HttpURLConnection) url
-                .openConnection();
-
-              SharedPreferences sp = getSharedPreferences("session", 0);
-              String session_s = sp.getString("session","");
-              conn.setRequestProperty("Cookie", session_s.substring(0, session_s.indexOf(";")));
-              conn.setRequestMethod("GET");
-//              conn.setDoOutput(true);
-              conn.setReadTimeout(5000);
-              conn.setReadTimeout(5000);
-
-//              OutputStream out = conn.getOutputStream();
-//              String test = "name=123";
-//              out.write(test.getBytes());
-
-              if (conn.getResponseCode() == 200) {
-                Map<String, List<String>> ck = conn.getHeaderFields();
-
-                List<String> cookies = ck.get("Set-Cookie");
-                SharedPreferences.Editor spe =sp.edit();
-                spe.putString("session", cookies.get(0));
-                spe.commit();
-
-                InputStream is = conn.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-                String line = br.readLine();
-                System.out.println(line.toString());
-
-                String aa = "222";
-              }
-            } catch (MalformedURLException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-            } catch (IOException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-            }
-            super.run();
+        http.setMethod("POST");
+        http.setSetBody("productInfo="+productInfo.toString());
+        http.Http();
+        try {
+          JSONObject body = new JSONObject(http.body);
+          if((Boolean) body.get("productStatus") == true){
+            AlertDialog dialog = new AlertDialog.Builder(ImportProductActivity.this)
+              .setTitle("提示")
+              .setMessage("录入成功")
+              .show();
+            barcode.setText("");
+            productName.setText("");
+            salePrice.setText("");
+            costPrice.setText("");
+            weight.setText("");
+            taste.setText("");
+            remainStock.setText("0");
+            addStockNum.setText("0");
+            factory.setText("");
+          }else{AlertDialog dialog = new AlertDialog.Builder(ImportProductActivity.this)
+            .setTitle("提示")
+            .setMessage("录入失败失败")
+            .show();
           }
-
-        };
-        t.start();
-
-        String aa ="123";
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
       }
     });
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+    if(result != null) {
+      if(result.getContents() == null) {
+
+      } else {
+        final httpCookies queryOne = new httpCookies(getString(R.string.request_url)+"/production?barcode="
+          +result.getContents(), getSharedPreferences("session", 0));
+        queryOne.Http();
+        try {
+
+          if(queryOne.body == null){
+            barcode.setText(result.getContents());
+            productName.setText("");
+            salePrice.setText("");
+            costPrice.setText("");
+            weight.setText("");
+            taste.setText("");
+            remainStock.setText("0");
+            addStockNum.setText("0");
+            factory.setText("");
+          }else{
+            JSONObject body = new JSONObject(queryOne.body);
+            barcode.setText(body.get("barcode").toString());
+            productName.setText(body.get("productName").toString());
+            salePrice.setText(body.get("salePrice").toString());
+            costPrice.setText(body.get("costPrice").toString());
+            weight.setText(body.get("weight").toString());
+            taste.setText(body.get("taste").toString());
+            remainStock.setText(body.get("addStockNum").toString());
+            factory.setText(body.get("factory").toString());
+          }
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+
+      }
+    } else {
+      super.onActivityResult(requestCode, resultCode, data);
+    }
   }
 }

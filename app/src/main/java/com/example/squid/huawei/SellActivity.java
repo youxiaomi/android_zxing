@@ -5,9 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.squid.huawei.helper.ListProduction;
+import com.example.squid.huawei.helper.ListSell;
+import com.example.squid.huawei.httpCookies.httpCookies;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.BeepManager;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -16,109 +21,136 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.HttpCookie;
 import java.util.List;
 
 public class SellActivity extends AppCompatActivity {
-//    private static final String TAG = MainActivity.class.getSimpleName();
-//    private DecoratedBarcodeView barcodeView;
-//    private BeepManager beepManager;
-//    private String lastText;
-//
-//    long IntervalTime = System.currentTimeMillis() / 1000;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private DecoratedBarcodeView barcodeView;
+    private BeepManager beepManager;
+    private String lastText;
 
+    ListSell listView;
+
+    LinearLayout linearWrap;
+
+
+    long IntervalTime = System.currentTimeMillis() / 1000;
+
+    httpCookies getProduction;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sell);
 //
-//        barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcode_scanner);
-//        barcodeView.decodeContinuous(callback);
-//
-//        beepManager = new BeepManager(this);
+        barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcode_scanner);
+        barcodeView.decodeContinuous(callback);
+
+        beepManager = new BeepManager(this);
+        linearWrap = (LinearLayout) findViewById(R.id.listWrap);
+
+         listView = new ListSell(linearWrap, SellActivity.this);
+
     }
 
-//    private BarcodeCallback callback = new BarcodeCallback() {
-//        @Override
-//        public void barcodeResult(BarcodeResult result) {
-////            if(result.getText() == null || result.getText().equals(lastText)) {
-////                // Prevent duplicate scans
-////                return;
-////            }
-//            if(result.getText() == null || System.currentTimeMillis() /1000 - IntervalTime < 2 ) {
+    private BarcodeCallback callback = new BarcodeCallback() {
+        @Override
+        public void barcodeResult(BarcodeResult result) {
+//            if(result.getText() == null || result.getText().equals(lastText)) {
 //                // Prevent duplicate scans
 //                return;
 //            }
-//            IntervalTime = System.currentTimeMillis() / 1000;
-//            lastText = result.getText();
-//            beepManager.playBeepSoundAndVibrate();
-//
-//            //Added preview of scanned barcode
+            if(result.getText() == null || System.currentTimeMillis() /1000 - IntervalTime < 2 ) {
+                // Prevent duplicate scans
+                return;
+            }
+            IntervalTime = System.currentTimeMillis() / 1000;
+            lastText = result.getText();
+            beepManager.playBeepSoundAndVibrate();
+
+            getProduction = new httpCookies(getString(R.string.request_url)+"/production?barcode="+lastText, getSharedPreferences("session", 0));
+            getProduction.Http();
+
+            if(getProduction.body == null)return;
+            try{
+                listView.addView(new JSONObject(getProduction.body));
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+
+
+
+            //Added preview of scanned barcode
+
 //            TextView textView = (TextView) findViewById(R.id.ProductNum);
 //            textView.setText(lastText);
-////            imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
-//        }
-//
-//        @Override
-//        public void possibleResultPoints(List<ResultPoint> resultPoints) {
-//        }
-//    };
-//
-//    @Override
-//
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        barcodeView.resume();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//
-//        barcodeView.pause();
-//    }
-//
-//    public void pause(View view) {
-//        barcodeView.pause();
-//    }
-//
-//    public void resume(View view) {
-//        barcodeView.resume();
-//    }
-//
-//    public void triggerScan(View view) {
-//        barcodeView.decodeSingle(callback);
-//    }
-//
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        return barcodeView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
-//    }
-//
-//
-//    public void scanBarcode(View view) {
-//
-//        barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcode_scanner);
-//        barcodeView.decodeContinuous(callback);
-//
-//        beepManager = new BeepManager(this);
-//    }
-//
-//
-//
-//
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//        if(result != null) {
-//            if(result.getContents() == null) {
-//                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-//            } else {
-//                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-//            }
-//        } else {
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
-//    }
+
+//            imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
+        }
+
+        @Override
+        public void possibleResultPoints(List<ResultPoint> resultPoints) {
+        }
+    };
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        barcodeView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        barcodeView.pause();
+    }
+
+    public void pause(View view) {
+        barcodeView.pause();
+    }
+
+    public void resume(View view) {
+        barcodeView.resume();
+    }
+
+    public void triggerScan(View view) {
+        barcodeView.decodeSingle(callback);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return barcodeView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
+    }
+
+
+    public void scanBarcode(View view) {
+
+        barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcode_scanner);
+        barcodeView.decodeContinuous(callback);
+
+        beepManager = new BeepManager(this);
+    }
+
+
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

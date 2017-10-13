@@ -15,6 +15,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="fullSensor"
+            android:windowSoftInputMode="adjustPan"
             tools:replace="screenOrientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -30,6 +31,8 @@
         <activity android:name=".LoginActivity">
         </activity>
         <activity android:name=".ImportProductActivity">
+        </activity>
+        <activity android:name=".MenuActivity">
         </activity>
     </application>
 

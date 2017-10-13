@@ -1,43 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.squid.huawei.MainActivity">
 
-    <!---->
-    <!--<com.journeyapps.barcodescanner.DecoratedBarcodeView-->
-        <!--android:id="@+id/barcode_scanner"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="100pt"-->
-        <!--android:layout_above="@+id/buttonsLayout"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--&gt;-->
-    <!--</com.journeyapps.barcodescanner.DecoratedBarcodeView>-->
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/barcode_scanner"
+        android:layout_width="wrap_content"
+        android:layout_height="80pt"
+        android:layout_alignParentTop="true"
+        >
+    </com.journeyapps.barcodescanner.DecoratedBarcodeView>
 
-    <!--<LinearLayout-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:id="@+id/buttonsLayout"-->
-        <!--android:layout_toLeftOf="@+id/centerHorizont"-->
-        <!--tools:layout_editor_absoluteY="0dp"-->
-        <!--tools:layout_editor_absoluteX="8dp">-->
-        <!--<TextView-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+
+        <LinearLayout
+            android:id="@+id/listWrap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!--<TextView-->
             <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="100pt"-->
-            <!--android:id="@+id/ProductNum"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="阿斯蒂芬"-->
             <!--/>-->
-    <!--</LinearLayout>-->
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="阿斯蒂芬"-->
+            <!--/>-->
+            <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="删除"-->
+            <!--/>-->
 
-    <!--<View-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="100dp"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:id="@+id/centerHorizont"-->
-        <!--tools:layout_editor_absoluteY="8dp"-->
-        <!--tools:layout_editor_absoluteX="0dp" />-->
+        </LinearLayout>
+    </ScrollView>
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20pt"
+        android:orientation="horizontal"
+        android:id="@+id/total"
+        >
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/totalQuality"
+            android:gravity="right"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/colorAccent"
+            android:text="0"
+            >
+        </TextView>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="件"
+            android:layout_gravity="center"
+            >
+        </TextView>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/totalPrice"
+            android:text="0"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="20dp"
+            >
+        </TextView>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="元"
+            android:layout_gravity="center"
+            >
+        </TextView>
+    </LinearLayout>
+</LinearLayout>

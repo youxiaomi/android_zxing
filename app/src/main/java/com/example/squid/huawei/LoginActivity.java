@@ -1,8 +1,18 @@
 package com.example.squid.huawei;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.example.squid.huawei.httpCookies.httpCookies;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,58 +31,42 @@ public class LoginActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
 
+
+    Button loginBtn = (Button) findViewById(R.id.loginBtn);
+
+    final EditText account = (EditText) findViewById(R.id.account);
+    final EditText password = (EditText) findViewById(R.id.password);
+
+    final Intent muneIntent = new Intent(this, MenuActivity.class);
+    loginBtn.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        String parmas = "?account="+account.getText()+"&password="+password.getText();
+        httpCookies loginHttp = new httpCookies(getString(R.string.request_url)+"/login"+parmas, getSharedPreferences("session", 0));
+        loginHttp.Http();
+        try {
+          JSONObject loginStatus = new JSONObject(loginHttp.body);
+          if(loginStatus.has("loginStatus")){
+            AlertDialog dialog = new AlertDialog.Builder(LoginActivity.this)
+              .setTitle("错误信息")
+              .setMessage(loginStatus.get("loginStatus").toString())
+              .show();
+          }
+          else{
+            startActivity(muneIntent);
+          }
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+
+      }
+    });
+
 //    WebView myWebView = (WebView) findViewById(R.id.webview);
 //    myWebView.loadUrl("http://www.qq.com");
 //    WebSettings webSettings = myWebView.getSettings();
 //    webSettings.setJavaScriptEnabled(true);
 //    myWebView.setWebViewClient(new WebViewClient());
 
-
-    Thread t = new Thread() {
-      @Override
-      public void run() {
-        // TODO Auto-generated method stub
-        try {
-          final String path = getString(R.string.request_url);
-          URL url = new URL(path);
-          HttpURLConnection conn = (HttpURLConnection) url
-            .openConnection();
-
-          SharedPreferences sp = getSharedPreferences("session", 0);
-          String session_s = sp.getString("session","");
-          conn.setRequestProperty("Cookie", session_s.substring(0, session_s.indexOf(";")));
-          conn.setReadTimeout(5000);
-          conn.setReadTimeout(5000);
-          if (conn.getResponseCode() == 200) {
-            Map<String, List<String>> ck = conn.getHeaderFields();
-
-            List<String> cookies = ck.get("Set-Cookie");
-            SharedPreferences.Editor spe =sp.edit();
-            spe.putString("session", cookies.get(0));
-            spe.commit();
-
-
-
-            InputStream is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-            String line = br.readLine();
-
-            System.out.println(line.toString());
-
-            String aa = "222";
-          }
-        } catch (MalformedURLException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        super.run();
-      }
-
-    };
-    t.start();
   }
 }
