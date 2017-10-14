@@ -62,7 +62,7 @@
             android:gravity="right"
             android:layout_gravity="center"
             android:layout_marginRight="10dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:text="0"
             >
         </TextView>
@@ -82,7 +82,7 @@
             android:layout_marginRight="10dp"
             android:layout_gravity="center"
             android:textColor="@color/colorAccent"
-            android:textSize="20dp"
+            android:textSize="30dp"
             >
         </TextView>
         <TextView
@@ -92,5 +92,13 @@
             android:layout_gravity="center"
             >
         </TextView>
+
+        <Button
+            android:id="@+id/submitSell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="完成"
+
+            />
     </LinearLayout>
 </LinearLayout>

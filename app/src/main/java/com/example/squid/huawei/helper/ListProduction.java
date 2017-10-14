@@ -29,52 +29,76 @@ public class ListProduction extends AppCompatActivity {
 
 
   private LinearLayout ParentNode ;
-  JSONArray testJson;
-  public ListProduction(final LinearLayout ParentNode, final Activity CurrentActivity){
+  JSONArray products;
+  public ListProduction(final LinearLayout ParentNode, final Activity CurrentActivity, JSONArray products){
     this.ParentNode = ParentNode;
-    String testString = "[{'barcode':'123345','name':'薯片'},{'barcode':'12333333','name':'水'}]";
-    try {
-      this.testJson = new JSONArray(testString);
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
+    this.products = products;
 
-    LinearLayout.LayoutParams layParams= new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-      ViewGroup.LayoutParams.WRAP_CONTENT);
 
-    for( int i = 0;i <testJson.length();i ++){
+    ViewGroup.LayoutParams layParams = new LinearLayout.LayoutParams(
+      ViewGroup.LayoutParams.WRAP_CONTENT,
+      ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+
+    for( int i = 0;i <products.length();i ++){
       final JSONObject currentJson;
       try {
-        currentJson = testJson.getJSONObject(i);
-        final String currentName = currentJson.get("name").toString();
-        String currentBarCode = currentJson.get("barcode").toString();
-
+        currentJson = products.getJSONObject(i);
         final LinearLayout WrapLayout = new LinearLayout(CurrentActivity);
-        Button testBtn = new Button(CurrentActivity);
-        testBtn.setText("删除");
-        testBtn.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            AlertDialog dialog = new AlertDialog.Builder(CurrentActivity)
-              .setTitle("提示")
-              .setMessage("确认删除"+currentName.toString())
-              .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  ParentNode.removeView(WrapLayout);
-                }
-              })
-              .show();
-          }
-        });
 
-        TextView barcode = new TextView(CurrentActivity);
-        barcode.setText(currentBarCode.toString());
+        final String productName = currentJson.get("productName").toString();
+        String barcode = currentJson.get("barcode").toString();
+        String salePrice = currentJson.get("salePrice").toString();
+        String weight = currentJson.get("weight").toString();
+        String addStockNum = currentJson.get("addStockNum").toString();
 
-        WrapLayout.addView(barcode);
-        WrapLayout.addView(testBtn);
+        TextView productNameView = new TextView(CurrentActivity);
+        productNameView.setText(productName.toString());
+        productNameView.setLayoutParams(layParams);;
+        WrapLayout.addView(productNameView);
 
-        ParentNode.addView(WrapLayout, layParams);
+//        TextView barcodeView = new TextView(CurrentActivity);
+//        barcodeView.setText(barcode.toString());
+//        barcodeView.setWidth(200);
+//        WrapLayout.addView(barcodeView);
+
+        TextView sellPriceView = new TextView(CurrentActivity);
+        sellPriceView.setText(salePrice.toString());
+        sellPriceView.setLayoutParams(layParams);;
+        WrapLayout.addView(sellPriceView);
+
+//        TextView weightView = new TextView(CurrentActivity);
+//        weightView.setText(weight.toString());
+//        weightView.setWidth(10);
+//        WrapLayout.addView(weightView);
+
+        TextView addStockNumView = new TextView(CurrentActivity);
+        addStockNumView.setText(addStockNum.toString());
+        addStockNumView.setLayoutParams(layParams);;
+        WrapLayout.addView(addStockNumView);
+
+
+
+//        Button delBtn = new Button(CurrentActivity);
+//        delBtn.setText("删除");
+//        delBtn.setOnClickListener(new View.OnClickListener() {
+//          @Override
+//          public void onClick(View v) {
+//            AlertDialog dialog = new AlertDialog.Builder(CurrentActivity)
+//              .setTitle("提示")
+//              .setMessage("确认删除"+productName.toString())
+//              .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                  ParentNode.removeView(WrapLayout);
+//                }
+//              })
+//              .show();
+//          }
+//        });
+
+//        WrapLayout.addView(delBtn);
+        ParentNode.addView(WrapLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.WRAP_CONTENT));
       } catch (JSONException e) {
         e.printStackTrace();
       }

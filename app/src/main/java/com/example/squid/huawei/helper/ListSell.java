@@ -36,6 +36,8 @@ public class ListSell extends SellActivity {
   public double totalPrice = 0;
   public int totalQuality = 0;
 
+  public JSONArray productionlist = new JSONArray();
+
   public ListSell(final LinearLayout ParentNode, final Activity CurrentActivity){
     this.ParentNode = ParentNode;
     this.CurrentActivity =  CurrentActivity;
@@ -51,6 +53,8 @@ public class ListSell extends SellActivity {
 
       final String name = production.get("productName").toString();
       final double price = Float.parseFloat(production.get("salePrice").toString());
+      final String barcode = production.get("barcode").toString();
+
 
       Button delBtn = new Button(CurrentActivity);
       delBtn.setText("删除");
@@ -65,6 +69,17 @@ public class ListSell extends SellActivity {
               public void onClick(DialogInterface dialog, int which) {
                 totalPrice -= price;
                 --totalQuality;
+                for (int i = 0; i < productionlist.length(); i++) {
+                  try {
+                    if(productionlist.get(i).equals(barcode)){
+                      productionlist.remove(i);
+                      break;
+                    }
+                  } catch (JSONException e) {
+                    e.printStackTrace();
+                  }
+                }
+
                 updateTotal();
                 ParentNode.removeView(WrapLayout);
               }
@@ -88,7 +103,7 @@ public class ListSell extends SellActivity {
 
       totalPrice+= Float.parseFloat(production.get("salePrice").toString());
       ++totalQuality;
-
+      productionlist.put(production.get("barcode"));
       updateTotal();
       WrapLayout.addView(delBtn);
 

@@ -1,10 +1,13 @@
 package com.example.squid.huawei;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -52,8 +55,34 @@ public class SellActivity extends AppCompatActivity {
         beepManager = new BeepManager(this);
         linearWrap = (LinearLayout) findViewById(R.id.listWrap);
 
-         listView = new ListSell(linearWrap, SellActivity.this);
+        listView = new ListSell(linearWrap, SellActivity.this);
 
+
+        Button submitSellButton = (Button) findViewById(R.id.submitSell);
+
+        submitSellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                httpCookies selllist = new httpCookies(getString(R.string.request_url)+
+                  "/sell?productionList="+listView.productionlist.toString()+"&totalPrice="+listView.totalPrice,
+                  getSharedPreferences("session", 0));
+                selllist.Http();
+
+                if(selllist.body != null){
+                    AlertDialog dialog = new AlertDialog.Builder(SellActivity.this)
+                      .setTitle("提示")
+                      .setMessage("完成订单")
+                        .setOnDismissListener(new DialogInterface.OnDismissListener(){
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                finish();
+                            }
+                        })
+                      .show();
+                }
+
+            }
+        });
     }
 
     private BarcodeCallback callback = new BarcodeCallback() {
@@ -80,16 +109,6 @@ public class SellActivity extends AppCompatActivity {
             }catch (JSONException e){
                 e.printStackTrace();
             }
-
-
-
-
-            //Added preview of scanned barcode
-
-//            TextView textView = (TextView) findViewById(R.id.ProductNum);
-//            textView.setText(lastText);
-
-//            imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
         }
 
         @Override
