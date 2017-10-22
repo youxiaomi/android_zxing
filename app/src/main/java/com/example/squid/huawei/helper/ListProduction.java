@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,8 +37,8 @@ public class ListProduction extends AppCompatActivity {
 
 
     ViewGroup.LayoutParams layParams = new LinearLayout.LayoutParams(
-      ViewGroup.LayoutParams.WRAP_CONTENT,
-      ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+      150,
+      ViewGroup.LayoutParams.WRAP_CONTENT);
 
     for( int i = 0;i <products.length();i ++){
       final JSONObject currentJson;
@@ -50,30 +51,48 @@ public class ListProduction extends AppCompatActivity {
         String salePrice = currentJson.get("salePrice").toString();
         String weight = currentJson.get("weight").toString();
         String addStockNum = currentJson.get("addStockNum").toString();
+        String taste = currentJson.get("taste").toString();
 
         TextView productNameView = new TextView(CurrentActivity);
         productNameView.setText(productName.toString());
-        productNameView.setLayoutParams(layParams);;
+        productNameView.setLayoutParams(new LinearLayout.LayoutParams(
+          0,
+          ViewGroup.LayoutParams.WRAP_CONTENT, 4.0f));;
         WrapLayout.addView(productNameView);
 
 //        TextView barcodeView = new TextView(CurrentActivity);
 //        barcodeView.setText(barcode.toString());
-//        barcodeView.setWidth(200);
 //        WrapLayout.addView(barcodeView);
 
         TextView sellPriceView = new TextView(CurrentActivity);
-        sellPriceView.setText(salePrice.toString());
-        sellPriceView.setLayoutParams(layParams);;
+        sellPriceView.setText(salePrice.toString()+"元");
+        sellPriceView.setGravity(Gravity.CENTER);
+        sellPriceView.setLayoutParams(new LinearLayout.LayoutParams(
+          130,
+          ViewGroup.LayoutParams.WRAP_CONTENT));;
         WrapLayout.addView(sellPriceView);
 
-//        TextView weightView = new TextView(CurrentActivity);
-//        weightView.setText(weight.toString());
-//        weightView.setWidth(10);
-//        WrapLayout.addView(weightView);
+        TextView tasteView = new TextView(CurrentActivity);
+        tasteView.setLayoutParams(layParams);
+        tasteView.setGravity(Gravity.CENTER);
+//      taste.setWidth(100);
+        tasteView.setText(taste.toString());
+        WrapLayout.addView(tasteView);
+
+        TextView weightView = new TextView(CurrentActivity);
+        weightView.setText(weight.toString()+"g");
+        weightView.setGravity(Gravity.CENTER);
+        weightView.setLayoutParams(new LinearLayout.LayoutParams(
+          120,
+          ViewGroup.LayoutParams.WRAP_CONTENT));
+        WrapLayout.addView(weightView);
 
         TextView addStockNumView = new TextView(CurrentActivity);
         addStockNumView.setText(addStockNum.toString());
-        addStockNumView.setLayoutParams(layParams);;
+        addStockNumView.setLayoutParams(new LinearLayout.LayoutParams(
+          100,
+          ViewGroup.LayoutParams.WRAP_CONTENT));
+        addStockNumView.setGravity(Gravity.CENTER);
         WrapLayout.addView(addStockNumView);
 
 

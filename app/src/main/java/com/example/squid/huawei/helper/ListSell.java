@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -88,23 +89,61 @@ public class ListSell extends SellActivity {
         }
       });
       ViewGroup.LayoutParams params = new LinearLayout.LayoutParams(
-        ViewGroup.LayoutParams.WRAP_CONTENT,
-        ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+        150,
+        ViewGroup.LayoutParams.WRAP_CONTENT);
+
+      delBtn.setLayoutParams(new LinearLayout.LayoutParams(
+        50,
+        ViewGroup.LayoutParams.WRAP_CONTENT));
+//      delBtn.setWidth(10);
+      delBtn.setTextSize(10);
+      delBtn.setPadding(0,0,0,0);
 
       TextView productName = new TextView(CurrentActivity);
-      productName.setLayoutParams(params);
+      productName.setLayoutParams(new LinearLayout.LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT,1f));
       productName.setText(production.get("productName").toString());
+      productName.setWidth(0);
       WrapLayout.addView(productName);
+
+
+      TextView weight = new TextView(CurrentActivity);
+      weight.setLayoutParams(params);
+      weight.setGravity(Gravity.CENTER);
+      weight.setText(production.get("weight").toString()+"g");
+      WrapLayout.addView(weight);
+
+      TextView addStockNum = new TextView(CurrentActivity);
+      addStockNum.setLayoutParams(new LinearLayout.LayoutParams(
+        60,
+        ViewGroup.LayoutParams.WRAP_CONTENT));
+      addStockNum.setText(production.get("addStockNum").toString());
+      addStockNum.setGravity(Gravity.CENTER);
+      WrapLayout.addView(addStockNum);
+
+
+      TextView taste = new TextView(CurrentActivity);
+      taste.setLayoutParams(params);
+      taste.setGravity(Gravity.CENTER);
+//      taste.setWidth(100);
+      taste.setText(production.get("taste").toString());
+      WrapLayout.addView(taste);
 
       TextView salePrice = new TextView(CurrentActivity);
       salePrice.setLayoutParams(params);
-      salePrice.setText(production.get("salePrice").toString());
+      salePrice.setGravity(Gravity.CENTER);
+
+//      salePrice.setWidth(20);
+      salePrice.setText(production.get("salePrice").toString()+"元");
       WrapLayout.addView(salePrice);
+
 
       totalPrice+= Float.parseFloat(production.get("salePrice").toString());
       ++totalQuality;
       productionlist.put(production.get("barcode"));
       updateTotal();
+
       WrapLayout.addView(delBtn);
 
       ParentNode.addView(WrapLayout, layParams);

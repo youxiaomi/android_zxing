@@ -96,13 +96,13 @@ public class SellActivity extends AppCompatActivity {
                 // Prevent duplicate scans
                 return;
             }
-            IntervalTime = System.currentTimeMillis() / 1000;
             lastText = result.getText();
             beepManager.playBeepSoundAndVibrate();
 
             getProduction = new httpCookies(getString(R.string.request_url)+"/production?barcode="+lastText, getSharedPreferences("session", 0));
             getProduction.Http();
-
+            
+            IntervalTime = System.currentTimeMillis() / 1000;
             if(getProduction.body == null)return;
             try{
                 listView.addView(new JSONObject(getProduction.body));
